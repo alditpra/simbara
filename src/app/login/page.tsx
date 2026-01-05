@@ -1,10 +1,12 @@
 'use client';
 
 import { Lock, User } from 'lucide-react';
-import { useState } from 'react';
+import { useActionState, useState } from 'react';
+import { login } from '@/actions/auth';
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
+    const [state, formAction, isPending] = useActionState(login, null);
 
     return (
         <div className="flex flex-col h-screen bg-white">
@@ -49,24 +51,32 @@ export default function LoginPage() {
                             LOGIN
                         </h2>
 
-                        <form>
+                        {state?.error && (
+                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-sm font-bold text-center">
+                                {state.error}
+                            </div>
+                        )}
+
+                        <form action={formAction}>
                             <div className="relative mb-4">
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
                                 <input
+                                    name="username"
                                     type="text"
                                     placeholder="Username"
                                     required
-                                    className="w-full py-3 pr-4 pl-12 bg-[#e6e6e6] border-none rounded-full text-sm outline-none text-[#555]"
+                                    className="w-full py-3 pr-4 pl-12 bg-[#e6e6e6] border-none rounded-full text-sm outline-none text-[#555] font-semibold"
                                 />
                             </div>
 
                             <div className="relative mb-4">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
                                 <input
+                                    name="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Password"
                                     required
-                                    className="w-full py-3 pr-4 pl-12 bg-[#e6e6e6] border-none rounded-full text-sm outline-none text-[#555]"
+                                    className="w-full py-3 pr-4 pl-12 bg-[#e6e6e6] border-none rounded-full text-sm outline-none text-[#555] font-semibold"
                                 />
                             </div>
 
@@ -85,9 +95,10 @@ export default function LoginPage() {
 
                             <button
                                 type="submit"
-                                className="w-full bg-[#5cb85c] text-white py-3 rounded-full font-extrabold text-sm uppercase tracking-wide transition-colors duration-300 hover:bg-[#4cae4c] cursor-pointer border-none"
+                                disabled={isPending}
+                                className="w-full bg-[#5cb85c] text-white py-3 rounded-full font-extrabold text-sm uppercase tracking-wide transition-colors duration-300 hover:bg-[#4cae4c] cursor-pointer border-none disabled:opacity-70 disabled:cursor-not-allowed"
                             >
-                                LOGIN
+                                {isPending ? 'LOGGING IN...' : 'LOGIN'}
                             </button>
                         </form>
                     </div>
