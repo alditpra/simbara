@@ -48,7 +48,7 @@ export async function addZisLog(formData: FormData) {
 export async function getZisLogs() {
     noStore();
     try {
-        return await db.select().from(zisLogs).orderBy(desc(zisLogs.createdAt));
+        return await db.select().from(zisLogs).orderBy(desc(zisLogs.id));
     } catch (error) {
         console.error("Failed to fetch logs:", error);
         return [];
