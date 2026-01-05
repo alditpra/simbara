@@ -107,17 +107,7 @@ export default function Home() {
           </button>
         </Link>
 
-        {/* --- Animasi Tangan (SVG) --- */}
-        <div className="absolute -bottom-8 -right-14 w-20 h-20 z-20 animate-bounce-custom pointer-events-none hidden sm:block">
-          <svg className="w-full h-full drop-shadow-md" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Lengan Baju */}
-            <path d="M70 70 L90 90 L100 80 L80 60 Z" fill="#FF8C00" stroke="#000" strokeWidth="2" />
-            {/* Tangan */}
-            <path d="M40 30 C 40 25, 45 20, 50 25 L 50 50 L 55 50 L 55 28 C 55 23, 60 23, 60 28 L 60 50 L 65 50 L 65 30 C 65 25, 70 25, 70 30 L 70 60 C 70 70, 60 80, 50 80 L 30 80 L 20 60 C 15 50, 20 40, 30 40 Z" fill="#FFCCAA" stroke="#000" strokeWidth="2" />
-            {/* Jari Telunjuk */}
-            <path d="M30 40 L 25 20 C 23 15, 33 15, 35 20 L 40 40" fill="#FFCCAA" stroke="#000" strokeWidth="2" />
-          </svg>
-        </div>
+
       </div>
     </main>
   );
