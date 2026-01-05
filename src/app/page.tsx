@@ -8,7 +8,7 @@ import { getZisStats } from "@/actions/chartData";
 
 export default function Home() {
   const [showChart, setShowChart] = useState<string | null>(null);
-  const [chartData, setChartData] = useState({ p: [], d: [] });
+  const [chartData, setChartData] = useState<{ p: any[], d: any[] }>({ p: [], d: [] });
 
   useEffect(() => {
     // Fetch initial data
