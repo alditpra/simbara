@@ -4,7 +4,10 @@ import { db } from '@/db';
 import { zisLogs } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 
+import { unstable_noStore as noStore } from 'next/cache';
+
 export async function getZisStats() {
+    noStore();
     const currentYear = new Date().getFullYear();
 
     try {

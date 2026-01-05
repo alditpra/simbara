@@ -7,8 +7,11 @@ import { revalidatePath } from 'next/cache';
 import { eq, sql } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
+import { unstable_noStore as noStore } from 'next/cache';
+
 // Create Proposal
 export async function createProposal(formData: FormData) {
+    noStore();
     const nik = formData.get('nik') as string;
     const applicantName = formData.get('name') as string;
     const address = formData.get('address') as string;
