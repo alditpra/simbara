@@ -11,7 +11,7 @@ export default async function TambahZisPage() {
 
             {/* Riwayat Table (Server) */}
             <h2 className="text-xl font-black mb-4 text-black uppercase">RIWAYAT INPUT TERBARU</h2>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-x-auto">
                 <table className="w-full text-sm text-left">
                     <thead className="bg-gray-100 text-black uppercase font-bold">
                         <tr>

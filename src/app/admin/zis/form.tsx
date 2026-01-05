@@ -17,7 +17,7 @@ export default function ZisForm() {
     }
 
     return (
-        <div className="bg-white p-10 rounded-lg shadow-sm border border-gray-100 mb-10">
+        <div className="bg-white p-5 md:p-10 rounded-lg shadow-sm border border-gray-100 mb-10">
             <h2 className="text-2xl font-black mb-8 text-black uppercase">
                 TAMBAH INFO PEMASUKAN & PENDISTRIBUSIAN
             </h2>
