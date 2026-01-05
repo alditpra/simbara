@@ -3,7 +3,8 @@
 import { db } from '@/db';
 import { zisLogs } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
-import { sql } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
+import { unstable_noStore as noStore } from 'next/cache';
 
 // Action untuk Input ZIS
 export async function addZisLog(formData: FormData) {
@@ -45,8 +46,9 @@ export async function addZisLog(formData: FormData) {
 
 // Action untuk mendapatkan Log
 export async function getZisLogs() {
+    noStore();
     try {
-        return await db.select().from(zisLogs).orderBy(sql`${zisLogs.createdAt} DESC`);
+        return await db.select().from(zisLogs).orderBy(desc(zisLogs.createdAt));
     } catch (error) {
         console.error("Failed to fetch logs:", error);
         return [];
@@ -56,7 +58,7 @@ export async function getZisLogs() {
 // Action untuk Hapus Log
 export async function deleteZisLog(id: number) {
     try {
-        await db.delete(zisLogs).where(sql`${zisLogs.id} = ${id}`);
+        await db.delete(zisLogs).where(eq(zisLogs.id, id));
         revalidatePath('/admin/zis');
         revalidatePath('/');
         return { success: true };
