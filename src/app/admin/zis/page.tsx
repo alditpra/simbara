@@ -32,10 +32,10 @@ export default async function TambahZisPage() {
                                 <td className={`p-3 text-center font-bold uppercase ${log.type === 'pemasukan' ? 'text-green-600' : 'text-orange-500'}`}>
                                     {log.type}
                                 </td>
-                                <td className="p-3 text-center font-medium">
+                                <td className="p-3 text-center font-medium text-gray-800">
                                     {log.month}/{log.year}
                                 </td>
-                                <td className="p-3 text-right font-medium">
+                                <td className="p-3 text-right font-medium text-gray-800">
                                     Rp {Number(log.amount).toLocaleString('id-ID')}
                                 </td>
                                 <td className="p-3 text-center">
