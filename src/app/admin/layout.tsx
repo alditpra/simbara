@@ -110,7 +110,7 @@ export default function AdminLayout({
                 </aside>
 
                 {/* Konten Utama */}
-                <main className="flex-1 bg-[#f4f6f9] relative flex flex-col items-center justify-center overflow-y-auto w-full">
+                <main className="flex-1 bg-[#f4f6f9] relative flex flex-col items-center justify-start py-10 overflow-y-auto w-full">
 
                     {/* Widget Tanggal */}
                     {mounted && (
