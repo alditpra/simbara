@@ -8,6 +8,7 @@ import { eq, sql } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { unstable_noStore as noStore } from 'next/cache';
 import { saveFileLocally } from '@/lib/upload';
+import { NextResponse } from 'next/server';
 
 // Create Proposal
 export async function createProposal(formData: FormData) {
@@ -54,9 +55,12 @@ export async function createProposal(formData: FormData) {
         }).returning();
 
         revalidatePath('/admin/proposals');
-        return { success: true, data: result[0] };
+        return { success: true, data: result[0], redirect: '/admin/proposals' };
     } catch (error) {
-        console.error("Database insert failed", error);
+        console.error("Database insert failed:", error);
+        if (error instanceof Error) {
+            return { success: false, error: error.message };
+        }
         return { success: false, error: 'Gagal menyimpan proposal' };
     }
 }
@@ -100,9 +104,12 @@ export async function updateProposalStatus(id: number, status: string, notes: st
 
         revalidatePath('/admin/proposals');
         revalidatePath(`/admin/proposals/${id}/edit`);
-        return { success: true };
+        return { success: true, data: result[0] };
     } catch (error) {
         console.error('Error updating proposal:', error);
+        if (error instanceof Error) {
+            return { success: false, error: error.message };
+        }
         return { success: false, error: 'Gagal update status' };
     }
 }

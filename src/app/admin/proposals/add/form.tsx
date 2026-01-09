@@ -3,29 +3,32 @@
 import { createProposal } from '@/actions/proposals';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function AddProposalForm() {
     const [isPending, setIsPending] = useState(false);
+    const [error, setError] = useState<string>('');
+    const router = useRouter();
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setIsPending(true);
-        
+        setError('');
+
         try {
             const formData = new FormData(event.currentTarget);
             const result = await createProposal(formData);
-            
-            // Perhatikan: Jika createProposal melakukan redirect, kode di bawah ini mungkin tidak tereksekusi
-            // karena redirect di Next.js melempar error 'NEXT_REDIRECT'.
-            // Tapi jika function return error object, kita tangkap di sini.
-            if (result && !result.success) {
-                alert(result.error || 'Terjadi kesalahan saat menyimpan proposal');
+
+            if (result?.success && result.redirect) {
+                router.push(result.redirect);
+                router.refresh();
+            } else if (result?.error) {
+                setError(result.error);
+                setIsPending(false);
             }
-        } catch (error) {
-            // Next.js redirect throws an error that should be re-thrown or ignored if it's NEXT_REDIRECT
-            // But usually the server action handles redirect internally.
-            console.error("Submission error:", error);
-        } finally {
+        } catch (err) {
+            console.error("Submission error:", err);
+            setError('Terjadi kesalahan saat menyimpan proposal');
             setIsPending(false);
         }
     }
@@ -33,6 +36,12 @@ export default function AddProposalForm() {
     return (
         <div className="bg-white p-10 rounded-lg shadow-sm border border-gray-100">
             <h2 className="text-2xl font-black mb-8 text-black">TAMBAH PROPOSAL</h2>
+
+            {error && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-700 font-bold text-sm">{error}</p>
+                </div>
+            )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">

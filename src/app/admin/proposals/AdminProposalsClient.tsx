@@ -3,12 +3,14 @@
 import { deleteProposal, updateProposalStatus, getProposalById } from '@/actions/proposals';
 import { useState } from 'react';
 import UpdateProposalModal from '@/components/UpdateProposalModal';
+import { useRouter } from 'next/navigation';
 
 type AdminProposalsClientProps = {
     proposals: any[];
 }
 
 export default function AdminProposalsClient({ proposals: initialProposals }: AdminProposalsClientProps) {
+    const router = useRouter();
     const [proposals, setProposals] = useState<any[]>(initialProposals);
     const [selectedProposal, setSelectedProposal] = useState<any | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,6 +20,8 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
             const result = await deleteProposal(id);
             if (result.success) {
                 setProposals(prev => prev.filter(p => p.id !== id));
+            } else if (result.error) {
+                alert(result.error);
             }
         }
     };
@@ -27,6 +31,8 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
         if (proposal) {
             setSelectedProposal(proposal);
             setIsModalOpen(true);
+        } else {
+            alert('Proposal tidak ditemukan');
         }
     };
 
@@ -35,6 +41,9 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
         if (result.success) {
             setProposals(prev => prev.map(p => p.id === id ? { ...p, status, adminNotes: notes } : p));
             setIsModalOpen(false);
+            router.refresh();
+        } else if (result.error) {
+            alert('Gagal update proposal: ' + result.error);
         }
     };
 
