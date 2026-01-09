@@ -8,6 +8,8 @@ import { unstable_noStore as noStore } from 'next/cache';
 
 // Action untuk Input ZIS
 export async function addZisLog(formData: FormData) {
+    noStore();
+
     const type = formData.get('type') as string;
     const amount = formData.get('amount') as string;
     const month = formData.get('month') as string;
@@ -15,10 +17,9 @@ export async function addZisLog(formData: FormData) {
     const description = formData.get('description') as string;
 
     if (!type || !amount || !month || !year) {
-        throw new Error('Data tidak lengkap');
+        return { success: false, error: 'Data tidak lengkap' };
     }
 
-    // Konversi Nama Bulan ke Angka (Simple Map)
     const monthMap: Record<string, number> = {
         'JANUARI': 1, 'FEBRUARI': 2, 'MARET': 3, 'APRIL': 4,
         'MEI': 5, 'JUNI': 6, 'JULI': 7, 'AGUSTUS': 8,
@@ -28,18 +29,23 @@ export async function addZisLog(formData: FormData) {
     const monthNum = monthMap[month] || 1;
 
     try {
-        await db.insert(zisLogs).values({
+        const result = await db.insert(zisLogs).values({
             type: type,
-            amount: amount, // Drizzle akan handle konversi ke decimal string
+            amount: amount,
             month: monthNum,
             year: parseInt(year),
             description: description
-        });
+        }).returning();
 
-        revalidatePath('/'); // Refresh halaman depan agar grafik update
+        if (result.length === 0) {
+            return { success: false, error: 'Gagal menyimpan data' };
+        }
+
+        revalidatePath('/');
+        revalidatePath('/admin/zis');
         return { success: true };
     } catch (error) {
-        console.error(error);
+        console.error('Error adding ZIS log:', error);
         return { success: false, error: 'Gagal menyimpan data' };
     }
 }
@@ -57,8 +63,14 @@ export async function getZisLogs() {
 
 // Action untuk Hapus Log
 export async function deleteZisLog(id: number) {
+    noStore();
     try {
-        await db.delete(zisLogs).where(eq(zisLogs.id, id));
+        const result = await db.delete(zisLogs).where(eq(zisLogs.id, id)).returning();
+
+        if (result.length === 0) {
+            return { success: false, error: 'Data tidak ditemukan' };
+        }
+
         revalidatePath('/admin/zis');
         revalidatePath('/');
         return { success: true };

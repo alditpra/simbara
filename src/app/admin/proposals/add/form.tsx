@@ -65,7 +65,6 @@ export default function AddProposalForm() {
                     />
                 </div>
 
-                {/* Input File Tambahan (Untuk PDF) */}
                 <div className="flex flex-col gap-2">
                     <label className="font-bold text-sm text-black uppercase">UPLOAD PROPOSAL (PDF/DOC)</label>
                     <input
@@ -74,7 +73,7 @@ export default function AddProposalForm() {
                         accept=".pdf,.doc,.docx"
                         className="w-full max-w-md p-2 border-2 border-[#ccc] rounded-lg font-bold text-gray-700 bg-white cursor-pointer"
                     />
-                    <span className="text-xs text-red-500 font-bold">* Maksimal 4MB</span>
+                    <span className="text-xs text-gray-500 font-medium">Maksimal 4MB. Format: PDF, DOC, DOCX</span>
                 </div>
 
                 <div className="flex gap-3 mt-5 pt-5 border-t border-gray-100">

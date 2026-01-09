@@ -17,7 +17,7 @@ export async function login(prevState: any, formData: FormData) {
     try {
         const user = await db.select().from(users).where(eq(users.username, username)).limit(1);
 
-        if (user.length === 0) {
+        if (!user || user.length === 0) {
             return { error: 'Username tidak ditemukan' };
         }
 
@@ -27,15 +27,13 @@ export async function login(prevState: any, formData: FormData) {
             return { error: 'Password salah' };
         }
 
-        // Login sukses, buat session
         await createSession(user[0].id.toString());
 
     } catch (error) {
         console.error('Login error:', error);
-        return { error: 'Terjadi kesalahan server' };
+        return { error: 'Terjadi kesalahan server. Silakan coba lagi.' };
     }
 
-    // Redirect di luar try-catch karena redirect melempar error
     redirect('/admin/dashboard');
 }
 

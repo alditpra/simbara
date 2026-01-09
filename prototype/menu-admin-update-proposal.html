@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Admin Update Proposal - Simbara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- Reset Dasar --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        .page-header {
+            background-color: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #000;
+        }
+
+        /* --- Layout Container --- */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* --- Sidebar (Kiri) --- */
+        .sidebar {
+            width: 280px;
+            background-color: #8be69d; /* Hijau Pastel */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #bbb;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 30px;
+            padding-left: 10px;
+            color: #000;
+        }
+
+        .menu-btn {
+            background-color: #ffff00; /* Kuning */
+            border: 1px solid #e6e600;
+            border-radius: 30px;
+            padding: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #000;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+            line-height: 1.2;
+        }
+
+        .menu-btn:hover {
+            background-color: #fff700;
+        }
+
+        /* --- Konten Utama (Kanan) --- */
+        .content-area {
+            flex: 1;
+            background-color: #ebf0f5; /* Abu-abu muda */
+            position: relative;
+            padding: 40px;
+        }
+
+        /* Widget Tanggal */
+        .date-widget {
+            position: absolute;
+            top: 0;
+            right: 20px;
+            background-color: #ffcc00; /* Oranye */
+            padding: 10px 25px;
+            font-weight: 700;
+            font-size: 13px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* --- Kartu Update Proposal --- */
+        .update-card {
+            background-color: white;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 4px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: #000;
+        }
+
+        /* Baris Data (Pemohon, Alamat, NIK) */
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .info-label {
+            width: 150px; /* Lebar tetap untuk label agar titik dua sejajar */
+            text-transform: uppercase;
+        }
+
+        .info-separator {
+            margin-right: 10px;
+        }
+
+        .info-value {
+            text-transform: uppercase;
+        }
+
+        /* Area Interaksi (Checkbox & Notes) */
+        .interaction-area {
+            display: flex;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        /* Bagian Checkbox */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Custom Checkbox Styling agar besar dan kotak seperti gambar */
+        .custom-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #000; /* Border hitam tebal */
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: #fff;
+        }
+
+        .custom-checkbox i {
+            display: none; /* Sembunyikan centang default */
+            color: #000;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* State ketika dicentang */
+        .checkbox-item.checked .custom-checkbox i {
+            display: block; /* Tampilkan centang */
+        }
+
+        /* Bagian Kotak Catatan */
+        .notes-box {
+            border: 2px solid #000; /* Border hitam tebal */
+            padding: 15px;
+            width: 400px;
+            min-height: 120px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+
+        .notes-label {
+            font-weight: 800;
+            font-style: italic;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .notes-text {
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        /* Tombol Simpan */
+        .btn-simpan {
+            background-color: #4a90e2; /* Biru Cornflower */
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-simpan:hover {
+            background-color: #357ebd;
+        }
+
+        /* Responsif Sederhana */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 10px;
+            }
+            .menu-btn {
+                min-width: 120px;
+                margin-right: 10px;
+                margin-bottom: 0;
+            }
+            .interaction-area {
+                flex-direction: column;
+            }
+            .notes-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="page-header">
+        <h1>TAMPILAN MENU ADMINISTRATOR</h1>
+    </header>
+
+    <div class="main-container">
+        
+        <aside class="sidebar">
+            <div class="sidebar-title">SIMBARA</div>
+            
+            <a href="#" class="menu-btn">DASHBOARD</a>
+            <a href="#" class="menu-btn">TAMBAH PROPOSAL</a>
+            <a href="#" class="menu-btn">LIHAT PROPOSAL</a>
+            <a href="#" class="menu-btn">TAMBAH<br>INFO PEMASUKAN &<br>PENDISTRIBUSIAN</a>
+        </aside>
+
+        <main class="content-area">
+            
+            <div class="date-widget">
+                20 Oktober 2025 10:39:46
+            </div>
+
+            <div class="update-card">
+                <h2 class="card-title">Menu Admin Update Proposal</h2>
+
+                <div class="info-row">
+                    <span class="info-label">PEMOHON</span>
+                    <span class="info-separator">:</span>
+                    <span class="info-value">DINAS KESEHATAN</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">ALAMAT</span>
+                    <span class="info-separator">:</span>
+                    <span class="info-value">BANJARNEGARA</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">NIK PEMOHON</span>
+                    <span class="info-separator">:</span>
+                    <span class="info-value">3304030604930003</span>
+                </div>
+
+                <div class="interaction-area">
+                    
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <div class="custom-checkbox"></div>
+                            <span>Sedang di Proses</span>
+                        </div>
+                        
+                        <div class="checkbox-item checked">
+                            <div class="custom-checkbox">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span>Di Setujui</span>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <div class="custom-checkbox"></div>
+                            <span>Belum Di Setujui</span>
+                        </div>
+                    </div>
+
+                    <div class="notes-box">
+                        <span class="notes-label">Catatan :</span>
+                        <p class="notes-text">
+                            Proposal sudah di setuji.<br>
+                            Bidang terkait akan segera menghubungi anda
+                        </p>
+                    </div>
+
+                </div>
+
+                <button class="btn-simpan">Simpan</button>
+
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>

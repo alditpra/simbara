@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { getProposals, deleteProposal } from '@/actions/proposals';
+import { getProposals, deleteProposal, updateProposalStatus, getProposalById } from '@/actions/proposals';
 import { useEffect, useState } from 'react';
+import UpdateProposalModal from '@/components/UpdateProposalModal';
 
 type Proposal = {
     id: number;
@@ -12,7 +13,9 @@ type Proposal = {
 }
 
 export default function LihatProposalPage() {
-    const [proposals, setProposals] = useState<Proposal[]>([]);
+    const [proposals, setProposals] = useState<any[]>([]);
+    const [selectedProposal, setSelectedProposal] = useState<any | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         getProposals().then(setProposals);
@@ -23,7 +26,20 @@ export default function LihatProposalPage() {
             await deleteProposal(id);
             setProposals(prev => prev.filter(p => p.id !== id));
         }
-    }
+    };
+
+    const handleOpenUpdateModal = async (id: number) => {
+        const proposal = await getProposalById(id);
+        if (proposal) {
+            setSelectedProposal(proposal);
+            setIsModalOpen(true);
+        }
+    };
+
+    const handleSaveUpdate = async (id: number, status: string, notes: string) => {
+        await updateProposalStatus(id, status, notes);
+        setProposals(prev => prev.map(p => p.id === id ? { ...p, status, adminNotes: notes } : p));
+    };
 
     return (
         <div className="w-full max-w-6xl p-5 md:p-10">
@@ -65,9 +81,12 @@ export default function LihatProposalPage() {
                                 <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800">{p.nik}</td>
                                 <td className="p-3 border border-[#aabce0] text-center">
                                     <div className="flex justify-center gap-4">
-                                        <Link href={`/admin/proposals/${p.id}/edit`} className="text-blue-700 font-extrabold text-xs uppercase hover:underline">
+                                        <button
+                                            onClick={() => handleOpenUpdateModal(p.id)}
+                                            className="text-blue-700 font-extrabold text-xs uppercase hover:underline"
+                                        >
                                             UPDATE
-                                        </Link>
+                                        </button>
                                         <button
                                             onClick={() => handleDelete(p.id)}
                                             className="text-blue-700 font-extrabold text-xs uppercase hover:underline"
@@ -81,6 +100,13 @@ export default function LihatProposalPage() {
                     </tbody>
                 </table>
             </div>
+
+            <UpdateProposalModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                proposal={selectedProposal}
+                onSave={handleSaveUpdate}
+            />
         </div>
     );
 }
