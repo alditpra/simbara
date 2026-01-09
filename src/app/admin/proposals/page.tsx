@@ -16,9 +16,21 @@ export default function LihatProposalPage() {
     const [proposals, setProposals] = useState<any[]>([]);
     const [selectedProposal, setSelectedProposal] = useState<any | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        getProposals().then(setProposals);
+        setIsLoading(true);
+        getProposals()
+            .then(data => {
+                console.log('Proposals loaded:', data.length);
+                setProposals(data);
+            })
+            .catch(err => {
+                console.error('Failed to load proposals:', err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }, []);
 
     const handleDelete = async (id: number) => {
@@ -57,7 +69,6 @@ export default function LihatProposalPage() {
                 </button>
             </div>
 
-            {/* Table Section */}
             <div className="w-full overflow-x-auto border border-[#aabce0] rounded-lg shadow-sm bg-white">
                 <table className="w-full border-collapse min-w-[600px]">
                     <thead className="bg-[#c8dcf9]">
@@ -69,34 +80,41 @@ export default function LihatProposalPage() {
                         </tr>
                     </thead>
                     <tbody className="bg-[#eef4fc]">
-                        {proposals.length === 0 && (
+                        {isLoading ? (
+                            <tr>
+                                <td colSpan={4} className="p-10 text-center text-gray-600 font-bold">
+                                    Memuat data...
+                                </td>
+                            </tr>
+                        ) : proposals.length === 0 ? (
                             <tr>
                                 <td colSpan={4} className="p-5 text-center text-gray-500 font-bold italic">Belum ada proposal masuk</td>
                             </tr>
+                        ) : (
+                            proposals.map((p, index) => (
+                                <tr key={p.id}>
+                                    <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800">{index + 1}</td>
+                                    <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800 uppercase">{p.applicantName}</td>
+                                    <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800">{p.nik}</td>
+                                    <td className="p-3 border border-[#aabce0] text-center">
+                                        <div className="flex justify-center gap-4">
+                                            <button
+                                                onClick={() => handleOpenUpdateModal(p.id)}
+                                                className="text-blue-700 font-extrabold text-xs uppercase hover:underline"
+                                            >
+                                                UPDATE
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(p.id)}
+                                                className="text-blue-700 font-extrabold text-xs uppercase hover:underline"
+                                            >
+                                                HAPUS
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
                         )}
-                        {proposals.map((p, index) => (
-                            <tr key={p.id}>
-                                <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800">{index + 1}</td>
-                                <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800 uppercase">{p.applicantName}</td>
-                                <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800">{p.nik}</td>
-                                <td className="p-3 border border-[#aabce0] text-center">
-                                    <div className="flex justify-center gap-4">
-                                        <button
-                                            onClick={() => handleOpenUpdateModal(p.id)}
-                                            className="text-blue-700 font-extrabold text-xs uppercase hover:underline"
-                                        >
-                                            UPDATE
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(p.id)}
-                                            className="text-blue-700 font-extrabold text-xs uppercase hover:underline"
-                                        >
-                                            HAPUS
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
                     </tbody>
                 </table>
             </div>
