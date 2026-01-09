@@ -5,6 +5,8 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { deleteProposal } from '@/actions/proposals';
 import AdminProposalsClient from './AdminProposalsClient';
 
+export const dynamic = 'force-dynamic';
+
 noStore();
 
 async function getProposalsData() {

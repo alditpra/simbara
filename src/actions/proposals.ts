@@ -9,6 +9,7 @@ import { redirect } from 'next/navigation';
 import { unstable_noStore as noStore } from 'next/cache';
 import { saveFileLocally, canUseLocalStorage } from '@/lib/upload';
 import { NextResponse } from 'next/server';
+import { headers } from 'next/headers';
 
 export async function createProposal(formData: FormData) {
     noStore();
@@ -63,7 +64,7 @@ export async function createProposal(formData: FormData) {
                 return { success: false, error: 'Upload tidak tersedia di environment ini. Pastikan BLOB_READ_WRITE_TOKEN sudah di-set.' };
             }
         } catch (err) {
-            console.error("Upload failed:", err);
+            console.error('Upload failed:', err);
             if (err instanceof Error) {
                 console.error('Error message:', err.message);
                 console.error('Error stack:', err.stack);
@@ -89,9 +90,13 @@ export async function createProposal(formData: FormData) {
         revalidatePath('/admin/proposals');
         revalidatePath('/admin/proposals/add');
 
-        return { success: true, data: result[0], redirect: '/admin/proposals' };
+        return {
+            success: true,
+            data: result[0],
+            redirect: '/admin/proposals'
+        };
     } catch (error) {
-        console.error("Database insert failed:", error);
+        console.error('Database insert failed:', error);
         if (error instanceof Error) {
             console.error('Error name:', error.name);
             console.error('Error message:', error.message);
