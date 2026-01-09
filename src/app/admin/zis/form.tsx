@@ -2,15 +2,18 @@
 
 import { addZisLog } from '@/actions/zis';
 import { useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ZisForm() {
     const formRef = useRef<HTMLFormElement>(null);
+    const router = useRouter();
 
     async function clientAction(formData: FormData) {
         const result = await addZisLog(formData);
         if (result.success) {
             alert("Data Berhasil Disimpan!");
             formRef.current?.reset();
+            router.refresh();
         } else {
             alert("Gagal menyimpan data.");
         }
