@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { eq, sql } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { unstable_noStore as noStore } from 'next/cache';
-import { saveFileLocally } from '@/lib/upload';
+import { saveFileLocally, canUseLocalStorage } from '@/lib/upload';
 import { NextResponse } from 'next/server';
 
 // Create Proposal
@@ -36,8 +36,10 @@ export async function createProposal(formData: FormData) {
             if (process.env.BLOB_READ_WRITE_TOKEN) {
                 const blob = await put(file.name, file, { access: 'public', token: process.env.BLOB_READ_WRITE_TOKEN });
                 fileUrl = blob.url;
-            } else {
+            } else if (canUseLocalStorage()) {
                 fileUrl = await saveFileLocally(file);
+            } else {
+                return { success: false, error: 'Upload tidak tersedia di environment ini. Pastikan BLOB_READ_WRITE_TOKEN sudah di-set.' };
             }
         } catch (err) {
             console.error("Upload failed", err);

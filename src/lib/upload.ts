@@ -20,3 +20,7 @@ export async function saveFileLocally(file: File): Promise<string> {
 
     return `/uploads/${filename}`;
 }
+
+export function canUseLocalStorage(): boolean {
+    return process.env.NODE_ENV !== 'production';
+}
