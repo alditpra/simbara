@@ -4,7 +4,7 @@ import { db } from '@/db';
 import { proposals } from '@/db/schema';
 import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
-import { eq, sql, like } from 'drizzle-orm';
+import { eq, sql, like, or, ilike } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { unstable_noStore as noStore } from 'next/cache';
 import { saveFileLocally, canUseLocalStorage } from '@/lib/upload';
@@ -172,13 +172,18 @@ export async function deleteProposal(id: number) {
     }
 }
 
-export async function searchProposals(nik: string) {
+export async function searchProposals(query: string) {
     noStore();
     try {
-        if (!nik) {
+        if (!query) {
             return await getProposals();
         }
-        const result = await db.select().from(proposals).where(like(proposals.nik, `%${nik}%`)).orderBy(sql`${proposals.createdAt} DESC`);
+        const result = await db.select().from(proposals).where(
+            or(
+                like(proposals.nik, `%${query}%`),
+                ilike(proposals.applicantName, `%${query}%`)
+            )
+        ).orderBy(sql`${proposals.createdAt} DESC`);
         return result || [];
     } catch (error) {
         console.error('Error searching proposals:', error);

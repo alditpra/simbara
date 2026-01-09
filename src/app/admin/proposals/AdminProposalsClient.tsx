@@ -14,7 +14,7 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
     const [proposals, setProposals] = useState<any[]>(initialProposals);
     const [selectedProposal, setSelectedProposal] = useState<any | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [searchNik, setSearchNik] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
 
     const handleDelete = async (id: number) => {
@@ -51,13 +51,13 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
 
     const handleSearch = async () => {
         setIsSearching(true);
-        const results = await searchProposals(searchNik);
+        const results = await searchProposals(searchQuery);
         setProposals(results);
         setIsSearching(false);
     };
 
     const handleReset = () => {
-        setSearchNik('');
+        setSearchQuery('');
         setProposals(initialProposals);
     };
     return (
@@ -67,9 +67,9 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
             <div className="flex flex-col sm:flex-row gap-3 mb-8 max-w-xl items-center">
                 <input
                     type="text"
-                    placeholder="MASUKAN NO NIK"
-                    value={searchNik}
-                    onChange={(e) => setSearchNik(e.target.value)}
+                    placeholder="CARI NAMA / NIK"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="flex-1 p-3 border-2 border-black rounded-full font-bold text-gray-600 outline-none bg-[#eef2f5] uppercase placeholder:text-gray-400"
                 />
                 <button
@@ -92,22 +92,24 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
                     <thead className="bg-[#c8dcf9]">
                         <tr>
                             <th className="p-4 border border-[#aabce0] text-black font-extrabold text-sm w-16 text-center">NO</th>
-                            <th className="p-4 border border-[#aabce0] text-black font-extrabold text-sm text-center">PROPOSAL</th>
-                            <th className="p-4 border border-[#aabce0] text-black font-extrabold text-sm text-center">NIK PEMOHON</th>
+                            <th className="p-4 border border-[#aabce0] text-black font-extrabold text-sm text-left">NAMA</th>
+                            <th className="p-4 border border-[#aabce0] text-black font-extrabold text-sm text-left">NIK PEMOHON</th>
                             <th className="p-4 border border-[#aabce0] text-black font-extrabold text-sm w-48 text-center">ACTION</th>
                         </tr>
                     </thead>
                     <tbody className="bg-[#eef4fc]">
                         {proposals.length === 0 ? (
                             <tr>
-                                <td colSpan={4} className="p-5 text-center text-gray-500 font-bold italic">Belum ada proposal masuk</td>
+                                <td colSpan={4} className="p-5 text-center text-gray-500 font-bold italic">
+                                    {isSearching ? 'Mencari...' : 'Proposal tidak ditemukan'}
+                                </td>
                             </tr>
                         ) : (
                             proposals.map((p, index) => (
                                 <tr key={p.id}>
                                     <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800">{index + 1}</td>
-                                    <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800 uppercase">{p.applicantName}</td>
-                                    <td className="p-3 border border-[#aabce0] text-center font-medium text-gray-800">{p.nik}</td>
+                                    <td className="p-3 border border-[#aabce0] font-medium text-gray-800 uppercase">{p.applicantName}</td>
+                                    <td className="p-3 border border-[#aabce0] font-medium text-gray-800">{p.nik}</td>
                                     <td className="p-3 border border-[#aabce0] text-center">
                                         <div className="flex justify-center gap-4">
                                             <button

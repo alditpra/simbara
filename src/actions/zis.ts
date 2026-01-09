@@ -41,7 +41,6 @@ export async function addZisLog(formData: FormData) {
             return { success: false, error: 'Gagal menyimpan data' };
         }
 
-        revalidatePath('/');
         revalidatePath('/admin/zis');
         return { success: true };
     } catch (error) {
