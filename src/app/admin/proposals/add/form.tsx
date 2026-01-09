@@ -8,26 +8,47 @@ import { useRouter } from 'next/navigation';
 export default function AddProposalForm() {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string>('');
+    const [success, setSuccess] = useState<boolean>(false);
     const router = useRouter();
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setIsPending(true);
         setError('');
+        setSuccess(false);
+
+        const formData = new FormData(event.currentTarget);
+        console.log('Submitting proposal form...');
+        console.log('NIK:', formData.get('nik'));
+        console.log('Name:', formData.get('name'));
+        console.log('Address:', formData.get('address'));
+        console.log('File:', (formData.get('file') as File)?.name);
 
         try {
-            const formData = new FormData(event.currentTarget);
             const result = await createProposal(formData);
+            console.log('Server action result:', result);
 
             if (result?.success && result.redirect) {
-                router.push(result.redirect);
-                router.refresh();
+                console.log('Redirecting to:', result.redirect);
+                setSuccess(true);
+                setTimeout(() => {
+                    router.push(result.redirect);
+                }, 500);
             } else if (result?.error) {
+                console.error('Server action error:', result.error);
                 setError(result.error);
+                setIsPending(false);
+            } else {
+                console.error('Unexpected result from server action:', result);
+                setError('Terjadi kesalahan tak terduga');
                 setIsPending(false);
             }
         } catch (err) {
-            console.error("Submission error:", err);
+            console.error('Submission error:', err);
+            if (err instanceof Error) {
+                console.error('Error name:', err.name);
+                console.error('Error message:', err.message);
+            }
             setError('Terjadi kesalahan saat menyimpan proposal');
             setIsPending(false);
         }
@@ -40,6 +61,12 @@ export default function AddProposalForm() {
             {error && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-red-700 font-bold text-sm">{error}</p>
+                </div>
+            )}
+
+            {success && (
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-green-700 font-bold text-sm">Proposal berhasil ditambahkan! Mengalihkan ke daftar proposal...</p>
                 </div>
             )}
 

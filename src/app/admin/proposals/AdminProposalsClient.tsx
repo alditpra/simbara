@@ -1,7 +1,7 @@
 'use client';
 
 import { deleteProposal, updateProposalStatus, getProposalById } from '@/actions/proposals';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import UpdateProposalModal from '@/components/UpdateProposalModal';
 import { useRouter } from 'next/navigation';
 
@@ -47,6 +47,24 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
         }
     };
 
+    const refreshProposals = async () => {
+        try {
+            const response = await fetch('/admin/proposals?refresh=' + Date.now());
+            if (!response.ok) {
+                router.refresh();
+                return;
+            }
+            const data = await response.json();
+            if (data.props) {
+                setProposals(data.props);
+            } else {
+                router.refresh();
+            }
+        } catch (error) {
+            console.error('Failed to refresh proposals:', error);
+            router.refresh();
+        }
+    };
     return (
         <div className="w-full max-w-6xl p-5 md:p-10">
             <h1 className="text-2xl font-black mb-8 text-black uppercase">DAFTAR PROPOSAL</h1>
