@@ -3,13 +3,13 @@
 import { db } from '@/db';
 import { proposals } from '@/db/schema';
 import { put } from '@vercel/blob';
+import { revalidatePath } from 'next/cache';
 import { eq, sql } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { unstable_noStore as noStore } from 'next/cache';
 import { saveFileLocally, canUseLocalStorage } from '@/lib/upload';
 import { NextResponse } from 'next/server';
 
-// Create Proposal
 export async function createProposal(formData: FormData) {
     noStore();
 
@@ -85,6 +85,10 @@ export async function createProposal(formData: FormData) {
         }).returning();
 
         console.log('Database insert success:', result[0]);
+
+        revalidatePath('/admin/proposals');
+        revalidatePath('/admin/proposals/add');
+
         return { success: true, data: result[0], redirect: '/admin/proposals' };
     } catch (error) {
         console.error("Database insert failed:", error);
@@ -99,7 +103,6 @@ export async function createProposal(formData: FormData) {
     }
 }
 
-// Get All Proposals
 export async function getProposals() {
     noStore();
     try {
@@ -111,7 +114,6 @@ export async function getProposals() {
     }
 }
 
-// Get Single Proposal
 export async function getProposalById(id: number) {
     noStore();
     try {
@@ -123,7 +125,6 @@ export async function getProposalById(id: number) {
     }
 }
 
-// Update Proposal Status
 export async function updateProposalStatus(id: number, status: string, notes: string) {
     noStore();
     try {
@@ -136,6 +137,8 @@ export async function updateProposalStatus(id: number, status: string, notes: st
             return { success: false, error: 'Proposal tidak ditemukan' };
         }
 
+        revalidatePath('/admin/proposals');
+
         return { success: true, data: result[0] };
     } catch (error) {
         console.error('Error updating proposal:', error);
@@ -146,7 +149,6 @@ export async function updateProposalStatus(id: number, status: string, notes: st
     }
 }
 
-// Delete Proposal
 export async function deleteProposal(id: number) {
     noStore();
     try {
@@ -155,6 +157,8 @@ export async function deleteProposal(id: number) {
         if (result.length === 0) {
             return { success: false, error: 'Proposal tidak ditemukan' };
         }
+
+        revalidatePath('/admin/proposals');
 
         return { success: true };
     } catch (error) {
