@@ -1,7 +1,7 @@
 'use client';
 
-import { deleteProposal, updateProposalStatus, getProposalById } from '@/actions/proposals';
-import { useState, useEffect } from 'react';
+import { deleteProposal, updateProposalStatus, getProposalById, searchProposals } from '@/actions/proposals';
+import { useState } from 'react';
 import UpdateProposalModal from '@/components/UpdateProposalModal';
 import { useRouter } from 'next/navigation';
 
@@ -14,6 +14,8 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
     const [proposals, setProposals] = useState<any[]>(initialProposals);
     const [selectedProposal, setSelectedProposal] = useState<any | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchNik, setSearchNik] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
 
     const handleDelete = async (id: number) => {
         if (confirm('Yakin ingin menghapus proposal ini?')) {
@@ -47,36 +49,41 @@ export default function AdminProposalsClient({ proposals: initialProposals }: Ad
         }
     };
 
-    const refreshProposals = async () => {
-        try {
-            const response = await fetch('/admin/proposals?refresh=' + Date.now());
-            if (!response.ok) {
-                router.refresh();
-                return;
-            }
-            const data = await response.json();
-            if (data.props) {
-                setProposals(data.props);
-            } else {
-                router.refresh();
-            }
-        } catch (error) {
-            console.error('Failed to refresh proposals:', error);
-            router.refresh();
-        }
+    const handleSearch = async () => {
+        setIsSearching(true);
+        const results = await searchProposals(searchNik);
+        setProposals(results);
+        setIsSearching(false);
+    };
+
+    const handleReset = () => {
+        setSearchNik('');
+        setProposals(initialProposals);
     };
     return (
         <div className="w-full max-w-6xl p-5 md:p-10">
             <h1 className="text-2xl font-black mb-8 text-black uppercase">DAFTAR PROPOSAL</h1>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-8 max-w-xl">
+            <div className="flex flex-col sm:flex-row gap-3 mb-8 max-w-xl items-center">
                 <input
                     type="text"
                     placeholder="MASUKAN NO NIK"
+                    value={searchNik}
+                    onChange={(e) => setSearchNik(e.target.value)}
                     className="flex-1 p-3 border-2 border-black rounded-full font-bold text-gray-600 outline-none bg-[#eef2f5] uppercase placeholder:text-gray-400"
                 />
-                <button className="bg-gradient-to-b from-[#aaccff] to-[#bca0e6] text-black font-extrabold px-8 py-3 rounded-full shadow hover:opacity-90 uppercase text-sm">
-                    CARI PROPOSAL
+                <button
+                    onClick={handleSearch}
+                    disabled={isSearching}
+                    className="bg-gradient-to-b from-[#aaccff] to-[#bca0e6] text-black font-extrabold px-8 py-3 rounded-full shadow hover:opacity-90 uppercase text-sm disabled:opacity-50"
+                >
+                    {isSearching ? 'Mencari...' : 'CARI PROPOSAL'}
+                </button>
+                <button
+                    onClick={handleReset}
+                    className="text-gray-500 font-bold text-xs uppercase hover:underline"
+                >
+                    Reset
                 </button>
             </div>
 
