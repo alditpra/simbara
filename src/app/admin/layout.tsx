@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
+import { logout } from '@/actions/auth';
 
 export default function AdminLayout({
     children,
@@ -62,7 +63,7 @@ export default function AdminLayout({
                     `}
                 >
                     <div className="flex justify-between items-center mb-10 pl-2.5">
-                        <div className="text-3xl font-black text-black uppercase">
+                        <div className="text-2xl font-black text-black uppercase">
                             SIMBARA
                         </div>
                         {/* Close button inside sidebar for mobile convenience */}
@@ -106,6 +107,16 @@ export default function AdminLayout({
                         >
                             TAMBAH <br /> INFO PEMASUKAN & <br /> PENDISTRIBUSIAN
                         </SidebarLink>
+
+                        <form action={logout} className="mt-4">
+                            <button
+                                type="submit"
+                                className="w-full border border-red-400 rounded-full py-3 px-4 text-center font-bold text-sm text-white bg-red-500 hover:bg-red-600 cursor-pointer shadow-sm transition-all duration-100 flex items-center justify-center gap-2 min-h-[50px]"
+                            >
+                                <LogOut size={18} />
+                                LOGOUT
+                            </button>
+                        </form>
                     </nav>
                 </aside>
 
