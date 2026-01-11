@@ -5,11 +5,8 @@ import { proposals } from '@/db/schema';
 import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 import { eq, sql, like, or, ilike } from 'drizzle-orm';
-import { redirect } from 'next/navigation';
 import { unstable_noStore as noStore } from 'next/cache';
 import { saveFileLocally, canUseLocalStorage } from '@/lib/upload';
-import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
 
 export async function createProposal(formData: FormData) {
     noStore();
